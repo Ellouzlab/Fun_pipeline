@@ -3,9 +3,9 @@ import subprocess as sp
 from multiprocessing import cpu_count
 import pandas as pd
 from datetime import datetime
-from Bio import SeqIO
+'''from Bio import SeqIO
 from Bio.SeqFeature import SeqFeature, FeatureLocation
-from BCBio import GFF
+from BCBio import GFF'''
 
 
 def arg_parser():
