@@ -140,65 +140,9 @@ def get_extended_unique_colors(num_colors):
 
     return colors[:num_colors]
 
-def plot_stacked_bar_percentage(df, cog_descriptions):
+def plot_stacked_bar_percentage(df):
     # Convert gene counts to percentages
-    df_percentage = df.div(df.sum(axis=1), axis=0) * 100
 
-    # Get unique colors for the number of categories
-    num_categories = len(df.columns)
-    unique_colors = get_extended_unique_colors(num_categories)
-
-    # Create a stacked bar plot with custom colors
-    ax = df_percentage.plot(kind='bar', stacked=True, figsize=(15, 8), width=0.8, color=unique_colors)
-
-    # Set font size for all plot elements
-    plt.rcParams.update({'font.size': 14})
-
-    # Adding labels and title with larger font size
-    ax.set_xlabel("Fungal Genomes", fontsize=16)
-    ax.set_ylabel("Percentage of Genes (%)", fontsize=16)
-
-    # Format y-axis to show percentage
-    ax.yaxis.set_major_formatter(mticker.PercentFormatter())
-
-    # Sort legend entries to match the reverse order of the bars
-    handles, labels = ax.get_legend_handles_labels()
-    ordered_labels_handles = sorted(zip(labels, handles), key=lambda lh: df_percentage.columns.tolist().index(lh[0]), reverse=True)
-    ordered_handles = [handle for label, handle in ordered_labels_handles]
-    ordered_labels = [cog_descriptions.get(label, label) for label, handle in ordered_labels_handles]
-
-    # Create legend with larger font size
-    ax.legend(ordered_handles, ordered_labels, title="COG Categories", bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=16, title_fontsize=16)
-
-    # Beautify the x-axis labels
-    plt.xticks(rotation=45, ha='right')
-    plt.yticks(fontsize=14)
-
-    # Thicken the axes lines
-    [i.set_linewidth(1.5) for i in ax.spines.values()]
-
-    # Display the plot
-    plt.tight_layout()
-    plt.show()
-
-
-if __name__ == "__main__":
-    row_list=[]
-    for path in os.listdir(target):
-        FUNG = fungi(f"{target}/{path}")
-
-        result_dir_path = f"{FUNG.predict_dir}/annotate_results"
-
-        gbk_path= find_ext(result_dir_path, "gbk")
-        name=''.join(('\n'.join(FUNG.basename.split('_'))).split('strain\n'))
-
-        basename=' '.join(FUNG.basename.split("_"))
-
-        #make_circos_plot(gbk_path, name)
-
-        df = parse_gbk_for_cog(gbk_path, basename)
-        row_list.append(df)
-    df = pd.concat(row_list)
     cog_descriptions = {
         "A": "A: RNA processing and modification",
         "B": "B: Chromatin structure and dynamics",
@@ -227,5 +171,244 @@ if __name__ == "__main__":
         "Z": "Z: Cytoskeleton",
         # Add other categories if you have more
     }
+    # Convert gene counts to percentages
+    # Convert gene counts to percentages
+    df_percentage = df.div(df.sum(axis=1), axis=0) * 100
 
-    plot_stacked_bar_percentage(df, cog_descriptions)
+    # Get unique colors for the number of categories
+    num_categories = len(df.columns)
+    unique_colors = get_extended_unique_colors(num_categories)
+
+    # Create a wider stacked bar plot with custom colors
+    ax = df_percentage.plot(kind='bar', stacked=True, figsize=(20, 8), width=0.8, color=unique_colors)
+
+    # Set up the line graph for total counts
+    ax2 = ax.twinx()
+    total_count = df.sum(axis=1)
+    total_count.plot(kind='line', marker='o', color='black', ax=ax2, linewidth=2)
+    ax2.set_ylabel("Total COG Annotations", fontsize=16)
+    ax2.tick_params(axis='y', labelsize=14)
+
+    # Set both y-axes to start from zero
+    ax.set_ylim(bottom=0)
+    ax2.set_ylim(bottom=0)
+
+    # Set font size for all plot elements
+    plt.rcParams.update({'font.size': 14})
+
+    # Adding labels and title with larger font size
+    ax.set_xlabel("Fungal Genomes", fontsize=16)
+    ax.set_ylabel("Percentage of Genes (%)", fontsize=16)
+
+    # Format y-axis to show percentage
+    ax.yaxis.set_major_formatter(mticker.PercentFormatter())
+
+    # Combine handles and labels for both bar and line plots for the legend
+    handles, labels = ax.get_legend_handles_labels()
+    line_label = "Total COG Annotations"
+    line_handle, = ax2.get_lines()
+    handles.append(line_handle)
+    labels.append(line_label)
+
+    # Sort legend entries to match the order of the bars and include line plot
+    ordered_labels_handles = sorted(zip(labels, handles), key=lambda lh: df_percentage.columns.tolist().index(lh[0]) if lh[0] in df_percentage.columns else -1, reverse=True)
+    ordered_handles = [handle for label, handle in ordered_labels_handles]
+    ordered_labels = [cog_descriptions.get(label, label) for label, handle in ordered_labels_handles]
+
+    # Create a smaller legend with smaller font size and adjust position
+    ax.legend(ordered_handles, ordered_labels, bbox_to_anchor=(1.2, 1), loc='upper left', fontsize=12, title_fontsize=14)
+
+    # Beautify the x-axis labels
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')
+
+    # Thicken the axes lines
+    [i.set_linewidth(1.5) for i in ax.spines.values()]
+
+    # Adjust layout to prevent overlap and ensure everything fits
+    plt.tight_layout()
+
+    # Display the plot
+    plt.savefig("test_cog.png", dpi=300)
+
+def plot_stacked_bar_percentage_go(df, type):
+    # Convert gene counts to percentages
+    df_percentage = df.div(df.sum(axis=1), axis=0) * 100
+
+    # Get unique colors for the number of categories
+    num_categories = len(df.columns)
+    unique_colors = get_extended_unique_colors(num_categories)
+
+    # Create a wider stacked bar plot with custom colors
+    ax = df_percentage.plot(kind='bar', stacked=True, figsize=(20, 8), width=0.8, color=unique_colors)
+
+    # Set up the line graph for total counts
+    ax2 = ax.twinx()
+    total_count = df.sum(axis=1)
+    total_count.plot(kind='line', marker='o', color='black', ax=ax2, linewidth=2)
+    ax2.set_ylabel("Total Go Process Annotations", fontsize=16)
+    ax2.tick_params(axis='y', labelsize=14)
+
+    # Set both y-axes to start from zero
+    ax.set_ylim(bottom=0)
+    ax2.set_ylim(bottom=0)
+
+    # Set font size for all plot elements
+    plt.rcParams.update({'font.size': 14})
+
+    # Adding labels and title with larger font size
+    ax.set_xlabel("Samples", fontsize=16)
+    ax.set_ylabel("Percentage of Genes (%)", fontsize=16)
+
+    # Format y-axis to show percentage
+    ax.yaxis.set_major_formatter(mticker.PercentFormatter())
+
+    # Combine handles and labels for both bar and line plots for the legend
+    handles, labels = ax.get_legend_handles_labels()
+    line_label = "Total Annotations"
+    line_handle, = ax2.get_lines()
+    handles.append(line_handle)
+    labels.append(line_label)
+
+    # Sort legend entries to match the order of the bars and include line plot
+    ordered_labels_handles = sorted(zip(labels, handles), key=lambda lh: df_percentage.columns.tolist().index(lh[0]) if lh[0] in df_percentage.columns else -1, reverse=True)
+    ordered_handles = [handle for label, handle in ordered_labels_handles]
+    ordered_labels = [label for label, handle in ordered_labels_handles]
+
+    # Create a smaller legend with smaller font size and adjust position
+    ax.legend(ordered_handles, ordered_labels, bbox_to_anchor=(1.2, 1), loc='upper left', fontsize=12, title_fontsize=14)
+
+    # Beautify the x-axis labels
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')
+
+    # Thicken the axes lines
+    [i.set_linewidth(1.5) for i in ax.spines.values()]
+
+    # Adjust layout to prevent overlap and ensure everything fits
+    plt.tight_layout()
+
+    # Display the plot
+    plt.savefig(f"test_annotations_go_{type}.svg", dpi=300)
+def parse_gbk_for_GO_process(gbk_file, basename):
+    go_counts = {}
+
+    with open(gbk_file, 'r') as handle:
+        for record in SeqIO.parse(handle, "genbank"):
+            for feature in record.features:
+                if feature.type == "CDS":
+                    note = feature.qualifiers.get('note', [])
+                    for item in note:
+                        item_list=item.split(';')
+                        for entry in item_list:
+                            if "GO_process" in entry:
+                                stuff=entry.split('- ')[1].split(' [')[0]
+                                if not stuff in go_counts:
+                                    go_counts[stuff] = 1
+                                else:
+                                    go_counts[stuff] += 1
+    sorted_dict = dict(sorted(go_counts.items(), key=lambda item: item[1], reverse=True))
+
+    # Split the sorted dictionary into top 10 and the rest
+    top_10_items = dict(list(sorted_dict.items())[:10])
+    other_items_sum = sum(list(sorted_dict.values())[10:])
+
+    # Create a new dictionary with top 10 items and an 'other' category
+    first_10_elements_with_other = top_10_items
+    if other_items_sum > 0:
+        first_10_elements_with_other['Other Go Processes'] = other_items_sum
+
+    # Create a DataFrame with basename as the index and GO categories as columns
+    df = pd.DataFrame([first_10_elements_with_other], index=[basename])
+
+    return df
+
+
+def parse_gbk_for_GO(gbk_file, basename, type):
+    go_counts = {}
+
+    with open(gbk_file, 'r') as handle:
+        for record in SeqIO.parse(handle, "genbank"):
+            for feature in record.features:
+                if feature.type == "CDS":
+                    note = feature.qualifiers.get('note', [])
+                    for item in note:
+                        item_list=item.split(';')
+                        for entry in item_list:
+                            if f"GO_{type}" in entry:
+                                stuff=entry.split('- ')[1].split(' [')[0]
+                                if not stuff in go_counts:
+                                    go_counts[stuff] = 1
+                                else:
+                                    go_counts[stuff] += 1
+    sorted_dict = dict(sorted(go_counts.items(), key=lambda item: item[1], reverse=True))
+
+    # Split the sorted dictionary into top 10 and the rest
+    top_10_items = dict(list(sorted_dict.items())[:])
+
+
+    # Create a DataFrame with basename as the index and GO categories as columns
+    df = pd.DataFrame([top_10_items], index=[basename])
+
+    return df
+
+
+def top_x_columns_with_others(df, x):
+    if x >= df.shape[1]:
+        print(
+            "Warning: x is larger than or equal to the number of columns in the DataFrame. Returning the original DataFrame.")
+        return df
+
+    column_sums = df.sum()
+    sorted_columns = column_sums.sort_values(ascending=False).index.tolist()
+    top_columns = sorted_columns[:x]
+    other_columns = sorted_columns[x:]
+    df['Other'] = df[other_columns].sum(axis=1)
+    return df[top_columns + ['Other']]
+
+
+def main():
+    row_list=[]
+    row_list2=[]
+    row_list3=[]
+    row_list4=[]
+    for path in os.listdir(target):
+        FUNG = fungi(f"{target}/{path}")
+
+        result_dir_path = f"{FUNG.predict_dir}/annotate_results"
+
+        gbk_path= find_ext(result_dir_path, "gbk")
+        name=''.join(('\n'.join(FUNG.basename.split('_'))).split('strain\n'))
+
+        basename=' '.join(FUNG.basename.split("_"))
+
+        #make_circos_plot(gbk_path, name)
+
+        #df = parse_gbk_for_cog(gbk_path, basename)
+        #row_list.append(df)
+
+        df2 = parse_gbk_for_GO(gbk_path, basename, 'process')
+        row_list2.append(df2)
+
+        df3 = parse_gbk_for_GO(gbk_path, basename, 'component')
+        row_list3.append(df3)
+
+        df4 = parse_gbk_for_GO(gbk_path, basename, 'function')
+        row_list4.append(df4)
+
+    #df = pd.concat(row_list)
+    df2 = pd.concat(row_list2)
+    df2 = top_x_columns_with_others(df2, 15)
+    df2.to_csv('test_go.csv')
+    df3 = pd.concat(row_list3)
+    df3 = top_x_columns_with_others(df3, 15)
+    df3.to_csv('test_go_component.csv')
+    df4 = pd.concat(row_list4)
+    df4 = top_x_columns_with_others(df4, 15)
+    df4.to_csv('test_go_function.csv')
+
+    #plot_stacked_bar_percentage(df)
+    plot_stacked_bar_percentage_go(df2, 'process')
+    plot_stacked_bar_percentage_go(df3, 'component')
+    plot_stacked_bar_percentage_go(df4, 'function')
+
+if __name__ == "__main__":
+    main()
