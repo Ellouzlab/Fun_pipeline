@@ -13,6 +13,9 @@ def arg_parser():
     parser.add_argument("-i", "--input", help="input fasta", required=True)
     parser.add_argument("-o", "--output", help="Output directory", required=True)
     parser.add_argument("-s", "--species", help="Species name in the form 'Genus species''", required=True)
+    parser.add_argument('--strain', help="Strain name", required=True)
+    parser.add_argument('--sbt', help="Path to SBT file", required=True)
+    parser.add_argument('--locustag', help="Locus tag prefix", required=True)
     parser.add_argument("-t", "--threads", help="Number of threads (default: Max threads - 1)", required=False, default=cpu_count()-1)
     parser.add_argument("--export", help="Path to fun_exports.sh file with paths", required=False, default="/home/sulman/oualid_fungi/funannotate_pipeline/fun_exports.sh")
     return parser.parse_args()
@@ -151,14 +154,14 @@ def find_largest_gbk_file(directory):
     return largest_file
 
 @running_message
-def annotate(input_path: str, species: str, iprscan_path: str, antismash_dir: str, signalp_dir:str, threads: int):
+def annotate(input_path: str, species: str, iprscan_path: str, antismash_dir: str, signalp_dir:str, threads: int, sbt: str, locustag:str, strain):
     output_path=input_path.replace("_predict_folder", "_annotate_folder")
 
     antismash_gbk=find_largest_gbk_file(antismash_dir)
     signalp_gff3=f"{signalp_dir}/prediction_results.txt"
 
-    command = f"funannotate annotate -i {input_path} -o {output_path} --cpus {threads} -s '{species}'"
-    command += f" --antismash {antismash_gbk} --signalp {signalp_gff3} --iprscan {iprscan_path}"
+    command = f"funannotate annotate -i {input_path} -o {output_path} --cpus {threads} -s '{species}' --strain {strain}"
+    command += f" --antismash {antismash_gbk} --signalp {signalp_gff3} --iprscan {iprscan_path} --sbt {sbt} --rename {locustag}"
     if not os.path.exists(f"{input_path}/annotate_results"):
         sp.run(command, shell=True, executable="/bin/bash")
     return output_path
@@ -310,7 +313,7 @@ def main():
     ipr_path=iprscan(predict_path, args.threads)
     antismash_path=antismash(predict_path)
     signalp_path=signalp(predict_path)
-    annotate(predict_path, args.species, ipr_path, antismash_path, signalp_path, args.threads)
+    annotate(predict_path, args.species, ipr_path, antismash_path, signalp_path, args.threads, args.sbt, args.locustag, args.strain)
     '''
     #Run barrnap
     annot_folder=f"{predict_path}/annotate_results"
