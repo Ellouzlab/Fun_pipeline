@@ -1,3 +1,3 @@
-export FUNANNOTATE_DB='/home/sulman/diplodia_annotation/funannotate_db'
-export GENEMARK_PATH='/home/sulman/Downloads/gmes_linux_64_4/GeneMark-E-tests'
-export SIGNALP_DIR='/home/sulman/diplodia_annotation/programs/signalp6_fast/signalp-6-package' 
+export FUNANNOTATE_DB='path_to_fundb'
+export GENEMARK_PATH='path_to_genemark_ES'
+export SIGNALP_DIR='path_to_signalp_package' 
