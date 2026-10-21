@@ -1,0 +1,44 @@
+cff-version: 1.2.0
+message: "If you use the software or data from this repository, please cite the associated paper as below."
+authors:
+  - family-names: "Sulman"
+    given-names: "Muhammad"
+  - family-names: "Ilyukhin"
+    given-names: "Evgeny"
+  - family-names: "Villanueva"
+    given-names: "Oscar"
+  - family-names: "Nguyen"
+    given-names: "Hai D. T."
+  - family-names: "Ali"
+    given-names: "Shawkat"
+  - family-names: "Ellouze"
+    given-names: "Walid"
+    orcid: "https://orcid.org"
+title: "De novo Genome Assembly and Annotation of 12 Fungi Associated with Fruit Tree Decline Syndrome in ON, Canada"
+doi: "10.1038/s41597-025-05192-5"
+date-released: "2025-07-01"
+url: "https://doi.org/10.1038/s41597-025-05192-5"
+preferred-citation:
+  type: article
+  authors:
+    - family-names: "Sulman"
+      given-names: "Muhammad"
+    - family-names: "Ilyukhin"
+      given-names: "Evgeny"
+    - family-names: "Villanueva"
+      given-names: "Oscar"
+    - family-names: "Nguyen"
+      given-names: "Hai D. T."
+    - family-names: "Ali"
+      given-names: "Shawkat"
+    - family-names: "Ellouze"
+      given-names: "Walid"
+  title: "De novo Genome Assembly and Annotation of 12 Fungi Associated with Fruit Tree Decline Syndrome in ON, Canada"
+  journal: "Scientific Data"
+  year: 2025
+  month: 7
+  volume: 12
+  issue: 1
+  start: 1098
+  doi: "10.1038/s41597-025-05192-5"
+  url: "https://doi.org/10.1038/s41597-025-05192-5"
