@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "If you use the software or data from this repository, please cite the associated paper as below."
+message: "If you use this software, please cite the associated paper as below."
 authors:
   - family-names: "Sulman"
     given-names: "Muhammad"
@@ -14,10 +14,8 @@ authors:
   - family-names: "Ellouze"
     given-names: "Walid"
     orcid: "https://orcid.org"
-title: "De novo Genome Assembly and Annotation of 12 Fungi Associated with Fruit Tree Decline Syndrome in ON, Canada"
-doi: "10.1038/s41597-025-05192-5"
-date-released: "2025-07-01"
-url: "https://doi.org/10.1038/s41597-025-05192-5"
+title: "Fun_pipeline: Automated pipeline for annotating fungi genomes built with funannotate"
+url: "https://github.com/Ellouzlab/Fun_pipeline"
 preferred-citation:
   type: article
   authors:
@@ -41,4 +39,4 @@ preferred-citation:
   issue: 1
   start: 1098
   doi: "10.1038/s41597-025-05192-5"
-  url: "https://doi.org/10.1038/s41597-025-05192-5"
+  url: "https://doi.org"
